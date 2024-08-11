@@ -1,0 +1,51 @@
+body {
+    background-image: url("https://png.pngtree.com/thumb_back/fh260/background/20210501/pngtree-old-worn-paper-with-burnt-edges-image_699513.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    padding-top: 6%;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: antiquewhite
+}
+
+.lista {
+    background-color: antiquewhite;
+    color: black;
+    padding: 5%;
+    text-align: start;
+    width: 40vh;
+    border: solid;
+    border-color: black;
+    box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.747);
+}
+
+button {
+    margin: 5px;
+}
+
+.inputTarea {
+    margin: 5px;
+    margin-bottom: 15px;
+    border: solid;
+    border-width: 2px;
+    border-color: black;
+}
+
+.añadir {
+    background-color: rgb(255, 255, 255);
+    float: inline-end;
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.747);
+}
+
+.borrar {
+    border: none;
+    background-color: antiquewhite;
+    float: inline-end;
+}
+
+.tareasRestantes {
+    margin-top: 20px; 
+    font-weight: lighter; 
+}
