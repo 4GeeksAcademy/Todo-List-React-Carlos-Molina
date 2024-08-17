@@ -5,6 +5,64 @@ function Lista() {
     const [tareaInput, setTareaInput] = useState('');
     const [hoverIndex, setHoverIndex] = useState(null);
 
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('registroForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const usernameInput = document.getElementById('username');
+            const username = usernameInput.value.trim();
+            const apiUrl = "https://playground.4geeks.com/todo/users/"
+    
+            if (username) {
+                const resultado = await comprobarYCrearUsuario(username);
+                mostrarMensaje(resultado);
+                usernameInput.value = '';
+            }
+        });
+    
+        const comprobarYCrearUsuario = async (username) => {
+            try {
+                const response = await fetch(`${apiUrl} ${username}`, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' },
+                });
+    
+                if (!response.ok) {
+                    throw new Error('Error al verificar el usuario');
+                }
+    
+                const usuarios = await response.json();
+    
+                if (usuarios.length > 0) {
+                    return `El usuario "${username}" ya existe.`;
+                } else {
+                    const nuevoUsuarioResponse = await fetch('https://playground.4geeks.com/todo/users/', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username }),
+                    });
+    
+                    console.log('Respuesta del servidor:', nuevoUsuarioResponse);
+    
+                    if (!nuevoUsuarioResponse.ok) {
+                        const errorData = await nuevoUsuarioResponse.json();
+                        throw new Error(`Error al crear el nuevo usuario: ${errorData.message || 'Desconocido'}`);
+                    }
+    
+                    const nuevoUsuario = await nuevoUsuarioResponse.json();
+                    return `Nuevo usuario creado: ${nuevoUsuario.username}`;
+                }
+            } catch (error) {
+                console.error('Error en la operación:', error);
+                return `Ocurrió un error al procesar la solicitud: ${error.message}`;
+            }
+        };
+    
+        const mostrarMensaje = (mensaje) => {
+            const mensajeDiv = document.getElementById('mensaje');
+            mensajeDiv.textContent = mensaje;
+        };
+    });
+
     useEffect(() => {
         fetchTareas();
     }, []);
@@ -20,11 +78,11 @@ function Lista() {
                 setTareas(data.todos);
             } else {
                 console.error('La respuesta no contiene un array de tareas:', data);
-                setTareas([]); 
+                setTareas([]);
             }
         } catch (error) {
             console.error('Error fetching tareas:', error);
-            setTareas([]); 
+            setTareas([]);
         }
     };
 
@@ -33,24 +91,24 @@ function Lista() {
     };
 
     const añadirTarea = async () => {
-		if (tareaInput.trim()) {
-			try {
-				const response = await fetch("https://playground.4geeks.com/todo/todos/carlosMolina", {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify({ label: tareaInput }),
-				});
-				if (!response.ok) throw new Error('Error al añadir tarea');
-				const nuevaTarea = await response.json();
-				setTareas([...tareas, nuevaTarea]);
-				setTareaInput('');
-			} catch (error) {
-				console.error('Error al añadir tarea:', error);
-			}
-		}
-	};
+        if (tareaInput.trim()) {
+            try {
+                const response = await fetch("https://playground.4geeks.com/todo/todos/carlosMolina", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ label: tareaInput }),
+                });
+                if (!response.ok) throw new Error('Error al añadir tarea');
+                const nuevaTarea = await response.json();
+                setTareas([...tareas, nuevaTarea]);
+                setTareaInput('');
+            } catch (error) {
+                console.error('Error al añadir tarea:', error);
+            }
+        }
+    };
 
     const manejarKeyDown = (event) => {
         if (event.key === 'Enter') {
@@ -72,6 +130,11 @@ function Lista() {
 
     return (
         <div className="body">
+            <form id="registroForm">
+                <label htmlFor="username">Usuario:</label>
+                <input type="text" id="username" required />
+                <button type="submit">Ingresar</button>
+            </form>
             <h1 style={{ fontSize: '330%' }}>Lista de Tareas</h1>
             <div className="lista">
                 <input
@@ -95,11 +158,13 @@ function Lista() {
                     ))}
                 </ul>
             </div>
-			<div className="tareasRestantes">
+            <div className="tareasRestantes">
                 Tareas restantes: {tareas.length}
             </div>
+            <script src="../src/js/index.js"></script>
         </div>
     );
 }
+
 
 export default Lista;
